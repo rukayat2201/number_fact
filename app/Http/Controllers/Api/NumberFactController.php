@@ -71,7 +71,7 @@ class NumberFactController extends Controller
             } else {
                 $properties[] = 'even';
             }    
-            $response = Http::timeout(0.6)->get("http://numbersapi.com/{$num}?json");
+            $response = Http::timeout(0.2)->get("http://numbersapi.com/{$num}?json");
             $funFact = $response->successful() ? $response->json()['text'] : '';
             return response()->json([
                 'number' => $originalNum,
