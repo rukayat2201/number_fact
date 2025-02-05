@@ -44,7 +44,7 @@ class NumberFactController extends Controller
     }
     public function numberFact(Request $request)
     {
-        $num = $request->input('number');
+        $num = $request->input('number', '');
         if (!is_numeric($num)) {
             return response()->json([
                 'number' => $num,
@@ -71,7 +71,7 @@ class NumberFactController extends Controller
             } else {
                 $properties[] = 'even';
             }    
-            $response = Http::timeout(0.8)->get("http://numbersapi.com/{$num}?json");
+            $response = Http::timeout(0.6)->get("http://numbersapi.com/{$num}?json");
             $funFact = $response->successful() ? $response->json()['text'] : '';
             return response()->json([
                 'number' => $originalNum,
