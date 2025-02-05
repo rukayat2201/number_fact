@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Api;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Http\Request;
 
 class NumberFactController extends Controller
 {
@@ -42,14 +42,17 @@ class NumberFactController extends Controller
         return array_sum(str_split($num));
     }
 
-   public function numberFact($num)
+   public function numberFact(Request $request)
    {
-            if (!is_numeric($num)) {
-                return response()->json([
-                    'number' => 'alphabet',
-                    'error' => true,
-                ], 400);
-            }
+        $num = $request->query('number');
+
+        if (!is_numeric($num)) {
+            return response()->json([
+                'number' => 'alphabet',
+                'error' => true,
+            ], 400);
+        }  
+
         try {
             $num = (int) $num; 
             

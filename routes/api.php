@@ -9,4 +9,4 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 
-Route::get('/number-fun-fact/{num}', [NumberFactController::class, 'numberFact']);
+Route::get('/number-fun-fact', [NumberFactController::class, 'numberFact']);
