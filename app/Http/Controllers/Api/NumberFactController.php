@@ -10,8 +10,9 @@ class NumberFactController extends Controller
 {
     private function isPrime($num)
     {
-        if ($num <= 1) return false;
-        if ($num = -5) return false;
+        if($num <=1){
+            return false;
+        }
         for ($i = 2; $i <= sqrt($num); $i++) {
             if ($num % $i === 0) return false;
         }
@@ -43,31 +44,25 @@ class NumberFactController extends Controller
     }
     public function numberFact(Request $request)
     {
-        $num = $request->query('number');
+        $num = $request->input('number');
         if (!is_numeric($num)) {
             return response()->json([
                 'number' => $num,
                 'error' => true,
             ], 400);
         }
-        if ($num == null || $num == '') {
+        if (trim($num) === '' || !isset($num)) {
             return response()->json([
                 'number' => "",
                 'error' => true,
-            ], 400); 
-        }
-        if (empty($num)) {
-            return response()->json([
-                'number' => "",
-                'error' => true,
-            ], 400); 
+            ], 400);
         }
         $originalNum = $num ?? "";
         try {
-            $num = abs((int) $num); 
+            $num = (int) $num; 
             $prime = $this->isPrime($num);
             $perfect = $this->isPerfect($num);
-            $armstrong = $this->isArmstrong($num);
+            $armstrong = $this->isArmstrong(abs($num));  
             $digit_sum = $this->digitSum($num);
             $properties = [];
             if ($armstrong) $properties[] = 'armstrong';
