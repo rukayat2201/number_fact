@@ -48,10 +48,17 @@ class NumberFactController extends Controller
 
         if (!is_numeric($num)) {
             return response()->json([
-                'number' => 'alphabet',
+                'number' => $num,
                 'error' => true,
             ], 400);
-        }  
+        } 
+        
+        if ($num < 0) {
+            return response()->json([
+                'number' => $num,
+                'error' => true,
+            ], 400);
+        }
 
         try {
             $num = (int) $num; 
@@ -68,8 +75,6 @@ class NumberFactController extends Controller
             } else {
                 $properties[] = 'even';
             }
-            if ($perfect) $properties[] = 'perfect';
-            if ($prime) $properties[] = 'prime';
             $response = Http::get("http://numbersapi.com/{$num}?json");
             
             $funFact = $response->successful() ? $response->json()['text']: '';
@@ -84,7 +89,7 @@ class NumberFactController extends Controller
 
         } catch (\Exception $e) {
             return response()->json([
-                'number' => 'alphabet',
+                'number' => $num,
                 'error' => true,
             ], 400);
         }
