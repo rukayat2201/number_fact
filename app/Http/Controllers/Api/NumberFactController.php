@@ -27,13 +27,15 @@ class NumberFactController extends Controller
     }
     private function isArmstrong($num)
     {
+        $originalNum = $num;
+        $num = abs($num);
         $digits = str_split($num);
         $numDigits = count($digits);
         $sum = 0;
         foreach ($digits as $digit) {
-            $sum += pow((int) $digit, $numDigits);  
+            $sum += pow($digit, $numDigits);
         }
-        return $sum === (int) $num;
+        return $sum === (int) $originalNum;
     }
     private function digitSum($num)
     {
@@ -48,9 +50,15 @@ class NumberFactController extends Controller
                 'error' => true,
             ], 400);
         }
+        if ($num === null || $num === '') {
+            return response()->json([
+                'number' => "",
+                'error' => true,
+            ], 400); 
+        }
         $originalNum = $num;
         try {
-            $num = (int) $num;
+            $num = abs((int) $num); 
             $prime = $this->isPrime($num);
             $perfect = $this->isPerfect($num);
             $armstrong = $this->isArmstrong($num);
