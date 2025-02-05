@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers\Api;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Cache;
+use Illuminate\Http\Request;
 
 class NumberFactController extends Controller
 {
@@ -63,10 +62,8 @@ class NumberFactController extends Controller
             } else {
                 $properties[] = 'even';
             }
-            $funFact = Cache::remember("number_fact_{$num}", 60, function () use ($num) {
-                $response = Http::get("http://numbersapi.com/{$num}?json");
-                return $response->successful() ? $response->json()['text'] : '';
-            });
+            $response = Http::get("http://numbersapi.com/{$num}?json");
+            $funFact = $response->successful() ? $response->json()['text'] : '';
             return response()->json([
                 'number' => $originalNum,
                 'is_prime' => $prime,
