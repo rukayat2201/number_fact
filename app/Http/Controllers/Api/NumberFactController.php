@@ -51,7 +51,7 @@ class NumberFactController extends Controller
                 'error' => true,
             ], 400);
         }  
-        $isNegative = $num < 0;
+        $originalNum = $num;
         try {
             $num = abs((int) $num); 
             
@@ -59,9 +59,6 @@ class NumberFactController extends Controller
             $perfect = $this->isPerfect($num);
             $armstrong = $this->isArmstrong($num);
             $digit_sum = $this->digitSum($num);
-            if ($isNegative) {
-                $prime = false;
-            }
             $properties = [];
             if ($armstrong) $properties[] = 'armstrong';
             if ($num % 2 !== 0) {
@@ -69,11 +66,10 @@ class NumberFactController extends Controller
             } else {
                 $properties[] = 'even';
             }
-            $digit_sum = array_sum(str_split(abs($num))); 
             $response = Http::get("http://numbersapi.com/{$num}?json");
             $funFact = $response->successful() ? $response->json()['text']: '';
             return response()->json([
-                'number' => $num,
+                'number' => $originalNum,
                 'is_prime' => $prime,
                 'is_perfect' => $perfect,
                 'properties' => $properties,
@@ -82,7 +78,7 @@ class NumberFactController extends Controller
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
-                'number' => $num,
+                'number' => $originalNum,
                 'error' => true,
             ], 400);
         }
