@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers\Api;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Cache;
+use Illuminate\Http\Request;
 
 class NumberFactController extends Controller
 {
@@ -60,25 +59,20 @@ class NumberFactController extends Controller
         }
         $originalNum = $num ?? "";
         try {
-            $intNum = (int) $num; 
-            $prime = $this->isPrime($intNum);
-            $perfect = $this->isPerfect($intNum);
-            $armstrong = $this->isArmstrong(abs($intNum));  
-            $digit_sum = $this->digitSum($intNum);
+            $num = (int) $num; 
+            $prime = $this->isPrime($num);
+            $perfect = $this->isPerfect($num);
+            $armstrong = $this->isArmstrong(abs($num));  
+            $digit_sum = $this->digitSum($num);
             $properties = [];
             if ($armstrong) $properties[] = 'armstrong';
             if ($num % 2 !== 0) {
                 $properties[] = 'odd';
             } else {
                 $properties[] = 'even';
-            }
-
-            $funFact = Cache::remember("fun_fact_{$intNum}", now()->addHours(24), function () use ($intNum) {
-                $response = Http::timeout(2)->get("http://numbersapi.com/{$intNum}?json");
-                return $response->successful() ? $response->json()['text'] : '';
-            });
-            // $response = Http::get("http://numbersapi.com/{$num}?json");
-            // $funFact = $response->successful() ? $response->json()['text'] : '';
+            }    
+            $response = Http::timeout(0.8)->get("http://numbersapi.com/{$num}?json");
+            $funFact = $response->successful() ? $response->json()['text'] : '';
             return response()->json([
                 'number' => $originalNum,
                 'is_prime' => $prime,
