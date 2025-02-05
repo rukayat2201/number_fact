@@ -44,16 +44,16 @@ class NumberFactController extends Controller
     }
     public function numberFact(Request $request)
     {
-        $num = $request->input('number', '');
-        if (!is_numeric($num)) {
+        $num = $request->query('number');
+        if ($num === null || trim($num) === '') {
             return response()->json([
-                'number' => $num,
+                'number' => '',  
                 'error' => true,
             ], 400);
         }
-        if (trim($num) === '' || !isset($num)) {
+        if (!is_numeric($num)) {
             return response()->json([
-                'number' => "",
+                'number' => $num,
                 'error' => true,
             ], 400);
         }
