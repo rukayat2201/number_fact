@@ -2,21 +2,22 @@
 
 namespace App\Http\Controllers\Api;
 
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class NumberFactController extends Controller
 {
     private function isPrime($num)
     {
         if ($num <= 1) return false;
+        if ($num < 0) return false;
         for ($i = 2; $i <= sqrt($num); $i++) {
             if ($num % $i === 0) return false;
         }
         return true;
     }
-
     private function isPerfect($num)
     {
         $sum = 0;
@@ -25,36 +26,32 @@ class NumberFactController extends Controller
         }
         return $sum === $num;
     }
-
     private function isArmstrong($num)
     {
         $digits = str_split($num);
         $numDigits = count($digits);
         $sum = 0;
         foreach ($digits as $digit) {
-            $sum += pow($digit, $numDigits);
+            $sum += pow((int) $digit, $numDigits);  
         }
         return $sum === (int) $num;
     }
-
     private function digitSum($num)
     {
         return array_sum(str_split($num));
     }
-
-   public function numberFact(Request $request)
-   {
+    public function numberFact(Request $request)
+    {
         $num = $request->query('number');
         if (!is_numeric($num)) {
             return response()->json([
                 'number' => $num,
                 'error' => true,
             ], 400);
-        }  
+        }
         $originalNum = $num;
         try {
-            $num = abs((int) $num); 
-            
+            $num = (int) $num;
             $prime = $this->isPrime($num);
             $perfect = $this->isPerfect($num);
             $armstrong = $this->isArmstrong($num);
@@ -66,8 +63,10 @@ class NumberFactController extends Controller
             } else {
                 $properties[] = 'even';
             }
-            $response = Http::get("http://numbersapi.com/{$num}?json");
-            $funFact = $response->successful() ? $response->json()['text']: '';
+            $funFact = Cache::remember("number_fact_{$num}", 60, function () use ($num) {
+                $response = Http::get("http://numbersapi.com/{$num}?json");
+                return $response->successful() ? $response->json()['text'] : '';
+            });
             return response()->json([
                 'number' => $originalNum,
                 'is_prime' => $prime,
@@ -82,6 +81,5 @@ class NumberFactController extends Controller
                 'error' => true,
             ], 400);
         }
-   }
+    }
 }
-
