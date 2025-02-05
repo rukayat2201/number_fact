@@ -11,7 +11,7 @@ class NumberFactController extends Controller
     private function isPrime($num)
     {
         if ($num <= 1) return false;
-        if ($num < 0) return false;
+        if ($num = -5) return false;
         for ($i = 2; $i <= sqrt($num); $i++) {
             if ($num % $i === 0) return false;
         }
@@ -50,13 +50,19 @@ class NumberFactController extends Controller
                 'error' => true,
             ], 400);
         }
-        if ($num === null || $num === '') {
+        if ($num == null || $num == '') {
             return response()->json([
                 'number' => "",
                 'error' => true,
             ], 400); 
         }
-        $originalNum = $num;
+        if (empty($num)) {
+            return response()->json([
+                'number' => "",
+                'error' => true,
+            ], 400); 
+        }
+        $originalNum = $num ?? "";
         try {
             $num = abs((int) $num); 
             $prime = $this->isPrime($num);
