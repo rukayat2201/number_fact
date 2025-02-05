@@ -67,7 +67,7 @@ class NumberFactController extends Controller
             }
             if ($perfect) $properties[] = 'perfect';
             if ($prime) $properties[] = 'prime';
-            $response = Http::get("http://numbersapi.com?{$num}?json");
+            $response = Http::get("http://numbersapi.com/{$num}?json");
             
             $funFact = $response->successful() ? $response->json()['text']: '';
             return response()->json([
